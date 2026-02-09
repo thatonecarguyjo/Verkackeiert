@@ -14,7 +14,6 @@ html, body {
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
-
 .center {
   display: flex;
   justify-content: center;
@@ -23,20 +22,12 @@ html, body {
   flex-direction: column;
   text-align: center;
 }
-
-#loader {
-  font-size: 2em;
-}
-
-#main {
-  display: none;
-}
-
+#loader { font-size: 2em; }
+#main { display: none; }
 .glitch {
   font-size: 3em;
   animation: glitch 0.3s infinite;
 }
-
 @keyframes glitch {
   0% { transform: translate(0); }
   20% { transform: translate(-2px, 2px); }
@@ -45,15 +36,14 @@ html, body {
   80% { transform: translate(1px, -1px); }
   100% { transform: translate(0); }
 }
-
 .counter {
-  font-size: 1.5em;
+  font-size: 1.6em;
   margin-top: 20px;
 }
-
 .small {
-  opacity: 0.7;
-  margin-top: 10px;
+  opacity: 0.8;
+  margin-top: 12px;
+  font-size: 1.1em;
 }
 </style>
 </head>
@@ -67,26 +57,32 @@ html, body {
 
 <div id="main" class="center">
   <div class="glitch">😂 REINGEFALLEN 😂</div>
-  <div id="counter" class="counter">Klicks: …</div>
-  <div id="msg" class="small"></div>
+  <div id="counter" class="counter">Du bist Klick Nr. …</div>
+  <div id="msg" class="small">Neugier wird bestraft 😏</div>
 </div>
 
-<audio id="sound" preload="auto">
-  <source src="https://www.myinstants.com/media/sounds/windows-error.mp3" type="audio/mpeg">
-</audio>
-
 <script>
+const msgs = [
+  "Du dachtest echt, hier kommt was 😭",
+  "Neugier ist eine gefährliche Sache.",
+  "Insta hat gewonnen.",
+  "Heute schon jemanden reingelegt.",
+  "Du bist nicht allein. Wirklich nicht.",
+  "Dieser Klick war unvermeidbar."
+];
+
+// Ladeanimation
 let p = 0;
 const percent = document.getElementById("percent");
 const loader = document.getElementById("loader");
 const main = document.getElementById("main");
 
 const interval = setInterval(() => {
-  p += Math.floor(Math.random() * 8) + 1;
+  p += Math.floor(Math.random() * 7) + 1;
   if (p >= 100) {
     p = 100;
     clearInterval(interval);
-    setTimeout(showMain, 500);
+    setTimeout(showMain, 400);
   }
   percent.innerText = p + "%";
 }, 120);
@@ -94,23 +90,25 @@ const interval = setInterval(() => {
 function showMain() {
   loader.style.display = "none";
   main.style.display = "flex";
-  document.getElementById("sound").play();
 
-  fetch("https://api.countapi.xyz/hit/reingefallen-eskalation/insta")
+  // Spruch IMMER anzeigen
+  document.getElementById("msg").innerText =
+    msgs[Math.floor(Math.random() * msgs.length)];
+
+  // Globaler Counter mit Fallback
+  fetch("https://api.countapi.xyz/hit/reingefallen-final/insta")
     .then(res => res.json())
     .then(data => {
+      if (data && data.value) {
+        document.getElementById("counter").innerText =
+          "Du bist Klick Nr. " + data.value;
+      } else {
+        throw "no value";
+      }
+    })
+    .catch(() => {
       document.getElementById("counter").innerText =
-        "Du bist Klick Nr. " + data.value;
-
-      const msgs = [
-        "Du dachtest echt, hier kommt was 😭",
-        "Neugier ist eine gefährliche Sache.",
-        "Insta hat gewonnen.",
-        "Heute schon jemanden reingelegt.",
-        "Du bist nicht allein. Wirklich nicht."
-      ];
-      document.getElementById("msg").innerText =
-        msgs[Math.floor(Math.random() * msgs.length)];
+        "Du bist Klick Nr. ∞";
     });
 }
 </script>
