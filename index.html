@@ -1,48 +1,119 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>😜 Reingefallen!</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-    .box {
-      background: #222;
-      padding: 30px;
-      border-radius: 12px;
-    }
-    h1 {
-      font-size: 2.5em;
-    }
-    p {
-      font-size: 1.3em;
-    }
-  </style>
-</head>
-<body>
-  <div class="box">
-    <h1>😂 Reingefallen!</h1>
-    <p>Du bist offiziell reingelegt worden.</p>
-    <p><strong>Klicks:</strong> <span id="count">lädt…</span></p>
-  </div>
+<meta charset="UTF-8">
+<title>Reingefallen 😈</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
 
-  <script>
-    fetch('https://api.countapi.xyz/hit/reingefallen-johannes/insta')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('count').innerText = data.value;
-      })
-      .catch(() => {
-        document.getElementById('count').innerText = 'Fehler 😬';
-      });
-  </script>
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  text-align: center;
+}
+
+#loader {
+  font-size: 2em;
+}
+
+#main {
+  display: none;
+}
+
+.glitch {
+  font-size: 3em;
+  animation: glitch 0.3s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-1px, 1px); }
+  80% { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+.counter {
+  font-size: 1.5em;
+  margin-top: 20px;
+}
+
+.small {
+  opacity: 0.7;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loader" class="center">
+  <div>Inhalt wird geladen…</div>
+  <div id="percent">0%</div>
+</div>
+
+<div id="main" class="center">
+  <div class="glitch">😂 REINGEFALLEN 😂</div>
+  <div id="counter" class="counter">Klicks: …</div>
+  <div id="msg" class="small"></div>
+</div>
+
+<audio id="sound" preload="auto">
+  <source src="https://www.myinstants.com/media/sounds/windows-error.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let p = 0;
+const percent = document.getElementById("percent");
+const loader = document.getElementById("loader");
+const main = document.getElementById("main");
+
+const interval = setInterval(() => {
+  p += Math.floor(Math.random() * 8) + 1;
+  if (p >= 100) {
+    p = 100;
+    clearInterval(interval);
+    setTimeout(showMain, 500);
+  }
+  percent.innerText = p + "%";
+}, 120);
+
+function showMain() {
+  loader.style.display = "none";
+  main.style.display = "flex";
+  document.getElementById("sound").play();
+
+  fetch("https://api.countapi.xyz/hit/reingefallen-eskalation/insta")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("counter").innerText =
+        "Du bist Klick Nr. " + data.value;
+
+      const msgs = [
+        "Du dachtest echt, hier kommt was 😭",
+        "Neugier ist eine gefährliche Sache.",
+        "Insta hat gewonnen.",
+        "Heute schon jemanden reingelegt.",
+        "Du bist nicht allein. Wirklich nicht."
+      ];
+      document.getElementById("msg").innerText =
+        msgs[Math.floor(Math.random() * msgs.length)];
+    });
+}
+</script>
+
 </body>
 </html>
